@@ -1,95 +1,74 @@
 # Delivery Much Tech Challenge
 
-Bem vindo(a)! Esse é o Delivery Much Tech Challenge.
+This is the implementation of Delivery Much Tech Challenge. The main objective of this challenge was to implement an endpoint for searching recipes with one, two or three different ingredients. The application was built using hexagonal architecture, this approach allows the isolation of the business logic from the external connection. The isolation of the components allow better test scenarios for all components.
 
-Aqui você terá todas as informações para realizar o seu desafio.
-
-O tempo sugerido para conclusão do desafio é de três dias, mas não é uma regra. Estamos mais interessados em observar a qualidade da solução do que o tempo.
-
-Quando sua solução estiver pronta, envie um e-mail para `tech.challenge@deliverymuch.com.br` com o link do seu repositório no Github. Seu código será analisado pelo nosso time de engenheiros. Após a análise, enviaremos o feedback e as instruções dos próximos passos!
-
-Bom desafio!
-
-## O Desafio
-
-Você deve construir uma API que recebe ingredientes como parâmetro de entrada em uma chamada GET e retorna uma lista de receitas.
-Utilize as APIs públicas da RecipePuppy (http://www.recipepuppy.com/about/api/) e da Giphy (https://developers.giphy.com/docs/) para obter os dados necessários.
-
-A API deve receber como parâmetro um conjunto de ingredientes (máximo 3) e deve retornar os itens utilizados para realizar a busca; e uma lista de receitas.
-
-Cada item lista de receitas deve possuir 4 atributos:
-
-- Título da receita;
-- Lista de ingredientes;
-- Link para acessar a receita;
-- Link de um gif para a receita.
-
-
-#### A Estrutura
-
-A API possui apenas um endpoint, que deve respeitar a seguinte chamada:
-
-`http://{HOST}/recipes/?i={ingredient_1},{ingredient_2}`
-
-Exemplo:
-
-`http://127.0.0.1/recipes/?i=onion,tomato`
-
-
-A resposta dessa requisição deve seguir a seguinte estrutura:
+The file structure on this project are described bellow:
 
 ```
-{
-	"keywords": ["onion", "tomato"],
-	"recipes": [{
-		"title": "Greek Omelet with Feta",
-		"ingredients": ["eggs", "feta cheese", "garlic", "red onions", "spinach", "tomato", "water"],
-		"link": "http://www.kraftfoods.com/kf/recipes/greek-omelet-feta-104508.aspx",
-		"gif": "https://media.giphy.com/media/xBRhcST67lI2c/giphy.gif"
-	   },{
-		"title": "Guacamole Dip Recipe",
-		"ingredients": ["avocado", "onions", "tomato"],
-		"link":"http://cookeatshare.com/recipes/guacamole-dip-2783",
-		"gif":"https://media.giphy.com/media/I3eVhMpz8hns4/giphy.gif"
-	   }
-	]
-}
+./
+├── adapters
+│   ├── primary
+│   │   ├── middleware
+│   │   │   └── evaluateparameters.go
+│   │   └── server.go
+│   └── secondary
+│       ├── giphy
+│       │   ├── giphyapi.go
+│       │   └── models.go
+│       ├── http.go
+│       ├── http_test.go
+│       └── rpa
+│           ├── recipe.go
+│           ├── recipe_mock.go
+│           └── recipe_test.go
+├── application
+│   ├── recipe
+│   │   └── models.go
+│   └── recipepuppy
+│       └── models.go
+├── bin
+│   └── server
+├── cmd
+│   └── dmserver
+│       └── main.go
+├── go.mod
+├── go.sum
+├── LICENSE
+├── Makefile
+└── README.md
+
+12 directories, 18 files
 ```
 
-### Requisitos
+## First steps
 
-- Utilizar NodeJS ou Go para criar a aplicação;
-- Toda configuração e chaves de acesso (se necessário) devem ser acessadas em um arquivo de ambiente. Sua configuração deve estar documentada no README;
-- Para obter o gif no Giphy, utilize o título da receita recebido pelo RecipePuppy;
-- Os ingredientes recebidos pelo RecipePuppy são recebidos em String. Organize os ingredientes em um array e ordene esse array por ordem alfabética;
-- Se algum dos serviços externos estiver indisponível o projeto deverá informar o usuário dessa indisponibilidade;
-- Utilizar Docker para executar o projeto;
+To run or build the application you need to configure dot env file.
+For faster configuration you can copy the example
+
+```
+cp .env.example .env
+```
+
+On this configuration only two settings are available:
+
+- `SERVER_PORT`: the port to run the server
+- `GIPHY_API_KEY`: the api key from giphy service
+	- Check [this link](https://developers.giphy.com/docs/api#quick-start-guide) for more information about the key.
 
 
-# Critérios de Avaliação
+## Building
 
-### Entrega
-- O projeto está completo para ser executado?
-- O projeto atende ao que se propõe fazer?
-- Todos requisitos foram atendidos?
+To build the application you can use directly go or use the docker:
 
-### Boas Práticas
-- O código está de acordo com o guia de estilo do NodeJS / Go?
-- O código está bem estruturado?
-- O código está fluente na linguagem?
-- O código faz o uso correto de Design Patterns?
+Using Go:
+```
+go build -o bin/server cmd/dmserver/*.go
+```
 
-### Documentação
-- O código foi entregue com um arquivo de README claro de como se guiar?
-- A documentação foi suficiente para executar o projeto?
-- Os commits são pequenos e consistentes?
-- As mensagens de commit são claras?
+Using docker:
+```
+docker run --rm -v "${PWD}":/app golang:latest sh -c 'cd /app; make build-go'
+```
 
-### Código Limpo
-- O código possibilita expansão para novas funcionalidades?
-- O código é Don't Repeat Yourself?
-- O código é fácil de compreender?
+A shortcut was included on Makefile: `make build`.
 
-### Controle de Qualidade
-- O código possui configuração de lint?
-- O código possui testes unitários?
