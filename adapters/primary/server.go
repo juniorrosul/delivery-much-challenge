@@ -60,7 +60,14 @@ func StartServer() {
 		json.NewEncoder(w).Encode(response)
 	}).Methods("GET")
 	r.Use(middleware.EvaluateParameters)
-	if err := http.ListenAndServe(":8080", r); err != nil {
+
+	port := os.Getenv("SERVER_PORT")
+
+	if port == "" {
+		port = "8080"
+	}
+
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), r); err != nil {
 		log.Fatal(err)
 	}
 }
