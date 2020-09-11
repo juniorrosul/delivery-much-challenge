@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -25,14 +26,10 @@ func GetBodyResponse(res *http.Response) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer res.Body.Close()
-
 	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
-		fmt.Printf("unexpected status code %d\n body: %s\n", res.StatusCode, string(body))
 		return nil, err
 	}
-
 	return body, nil
 }
 
@@ -58,28 +55,21 @@ func (c *Connector) DoGet(params string) (*http.Response, error) {
 
 func (c *Connector) getResponse(method string, params string, body []byte) (*http.Response, error) {
 	url := c.url
-
 	if params != "" {
 		url = fmt.Sprintf("%s%s", url, params)
 	}
-
+	log.Println("URL", url)
 	r, err := http.NewRequest(method, url, bytes.NewBuffer(body))
-
 	if err != nil {
 		return nil, err
 	}
-
 	for i, v := range c.headers {
 		r.Header.Set(i, v)
 	}
-
 	client := &http.Client{}
-
 	res, err := client.Do(r)
-
 	if err != nil {
 		return nil, err
 	}
-
 	return res, nil
 }

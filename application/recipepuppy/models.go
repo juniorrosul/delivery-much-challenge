@@ -15,5 +15,12 @@ type ResponseIndividualModel struct {
 
 // ResponseModel - Response model
 type ResponseModel struct {
-	Recipe []ResponseIndividualModel `json:"results"`
+	Recipes []ResponseIndividualModel `json:"results"`
+}
+
+// NewRequestModel - New request model
+func NewRequestModel(ingredients []string) *RequestModel {
+	return &RequestModel{
+		ingredients,
+	}
 }

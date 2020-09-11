@@ -28,22 +28,18 @@ func NewRecipePuppyIntegration(httpConnector secondary.HTTPConnector) *RecipePup
 
 // GetRecipes - Get recipes from external API
 func (rpi *RecipePuppyIntegration) GetRecipes(request *recipepuppy.RequestModel) (*recipepuppy.ResponseModel, error) {
-
+	var rpr *recipepuppy.ResponseModel
 	params := strings.Join(request.Ingredients, ",")
-
 	res, err := rpi.conn.DoGet(fmt.Sprintf("/?i=%s", params))
-
 	if err != nil || params == "" {
 		return nil, err
 	}
-
 	body, err := secondary.GetBodyResponse(res)
-
-	var rpr *recipepuppy.ResponseModel
-
-	if err = json.Unmarshal(body, &rpr); err != nil {
+	if err != nil {
 		return nil, err
 	}
-
+	if err := json.Unmarshal(body, &rpr); err != nil {
+		return nil, err
+	}
 	return rpr, nil
 }

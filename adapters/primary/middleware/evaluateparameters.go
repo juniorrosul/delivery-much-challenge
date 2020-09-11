@@ -21,5 +21,7 @@ func EvaluateParameters(h http.Handler) http.Handler {
 			log.Println("Middleware: EvaluateParameters: Missing parameters")
 			w.WriteHeader(http.StatusBadRequest)
 		}
+
+		h.ServeHTTP(w, r)
 	})
 }
