@@ -39,20 +39,26 @@ func StartServer() {
 
 		for i := 0; i < len(recipes.Recipes); i++ {
 			giphyReq := giphy.NewGifRequest(os.Getenv("GIPHY_API_KEY"), recipes.Recipes[i].Title, 1)
+			ingredients := []string{}
+			gifURL := ""
+
 			giphyResponse, err := giphyIntegration.GetGif(giphyReq)
 			if err != nil {
 				log.Fatal("Error: ", err)
 			}
 
-			ingredients := strings.Split(recipes.Recipes[i].Ingredients, ", ")
-
+			ingredients = strings.Split(recipes.Recipes[i].Ingredients, ", ")
 			sort.Strings(ingredients)
+
+			if giphyResponse != nil {
+				gifURL = fmt.Sprintf("https://media.giphy.com/media/%s/giphy.gif", giphyResponse.Data[0].ID)
+			}
 
 			newRecipe := recipe.NewRecipe(
 				recipes.Recipes[i].Title,
 				ingredients,
 				recipes.Recipes[i].Href,
-				fmt.Sprintf("https://media.giphy.com/media/%s/giphy.gif", giphyResponse.Data[0].ID),
+				gifURL,
 			)
 			response.Recipes = append(response.Recipes, newRecipe)
 		}

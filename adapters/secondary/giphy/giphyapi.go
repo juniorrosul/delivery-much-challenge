@@ -3,6 +3,8 @@ package giphy
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
 	"net/url"
 
 	"github.com/juniorrosul/delivery-much-challenge/adapters/secondary"
@@ -25,8 +27,12 @@ func (gi *Integration) GetGif(req *GifRequest) (*GifResponse, error) {
 	var gr *GifResponse
 
 	res, err := gi.conn.DoGet(fmt.Sprintf("/gifs/search?api_key=%s&q=%s&limit=%d", req.APIKey, url.QueryEscape(req.QueryTerm), req.Limit))
+	log.Println(err, res.StatusCode)
+	if res != nil && res.StatusCode != http.StatusOK {
+		log.Println("Error")
+	}
 
-	if err != nil {
+	if err != nil && res == nil {
 		return nil, err
 	}
 
@@ -36,8 +42,10 @@ func (gi *Integration) GetGif(req *GifRequest) (*GifResponse, error) {
 		return nil, err
 	}
 
-	if err := json.Unmarshal(body, &gr); err != nil {
-		return nil, err
+	if res.StatusCode == http.StatusOK {
+		if err := json.Unmarshal(body, &gr); err != nil {
+			return nil, err
+		}
 	}
 
 	return gr, nil

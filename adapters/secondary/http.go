@@ -68,6 +68,11 @@ func (c *Connector) getResponse(method string, params string, body []byte) (*htt
 	}
 	client := &http.Client{}
 	res, err := client.Do(r)
+
+	if res.StatusCode != http.StatusOK {
+		return res, err
+	}
+
 	if err != nil {
 		return nil, err
 	}
