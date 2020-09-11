@@ -2,14 +2,17 @@ package primary
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/juniorrosul/delivery-much-challenge/adapters/primary/middleware"
 	"github.com/juniorrosul/delivery-much-challenge/adapters/secondary"
+	"github.com/juniorrosul/delivery-much-challenge/adapters/secondary/giphy"
 	"github.com/juniorrosul/delivery-much-challenge/adapters/secondary/rpa"
 	"github.com/juniorrosul/delivery-much-challenge/application/recipe"
 	"github.com/juniorrosul/delivery-much-challenge/application/recipepuppy"
@@ -24,6 +27,8 @@ func StartServer() {
 		recipeRequest := recipe.NewRequest(keywords)
 		requestModel := recipepuppy.NewRequestModel(recipeRequest.Keywords)
 		rpaIntegration := rpa.NewRecipePuppyIntegration(secondary.NewConnector("http://www.recipepuppy.com/api", map[string]string{"Content-Type": "application/json"}))
+		giphyIntegration := giphy.NewIntegration(secondary.NewConnector("http://api.giphy.com/v1", map[string]string{"Content-Type": "application/json"}))
+
 		recipes, err := rpaIntegration.GetRecipes(requestModel)
 		if err != nil {
 			log.Fatal("Error:", err)
@@ -33,6 +38,12 @@ func StartServer() {
 		response.Keywords = keywords
 
 		for i := 0; i < len(recipes.Recipes); i++ {
+			giphyReq := giphy.NewGifRequest(os.Getenv("GIPHY_API_KEY"), recipes.Recipes[i].Title, 1)
+			giphyResponse, err := giphyIntegration.GetGif(giphyReq)
+			if err != nil {
+				log.Fatal("Error: ", err)
+			}
+
 			ingredients := strings.Split(recipes.Recipes[i].Ingredients, ", ")
 
 			sort.Strings(ingredients)
@@ -41,7 +52,7 @@ func StartServer() {
 				recipes.Recipes[i].Title,
 				ingredients,
 				recipes.Recipes[i].Href,
-				recipes.Recipes[i].Thumbnail,
+				fmt.Sprintf("https://media.giphy.com/media/%s/giphy.gif", giphyResponse.Data[0].ID),
 			)
 			response.Recipes = append(response.Recipes, newRecipe)
 		}

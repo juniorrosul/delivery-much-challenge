@@ -1,3 +1,9 @@
+# Environment files
+.env
+
+# IDE
+.vscode
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -5,6 +11,7 @@
 *.so
 *.dylib
 bin
+
 # Test binary, built with `go test -c`
 *.test
 
