@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -55,13 +54,6 @@ func (c *Connector) Do(req *http.Request) (*http.Response, error) {
 // DoGet - make GET request
 func (c *Connector) DoGet(params string) (*http.Response, error) {
 	return c.getResponse(http.MethodGet, params, nil)
-}
-
-// CloseConnection - Close HTTP connection
-func CloseConnection(r *http.Request) {
-	if err := r.Body.Close(); err != nil {
-		log.Println("http.close_connection", err.Error())
-	}
 }
 
 func (c *Connector) getResponse(method string, params string, body []byte) (*http.Response, error) {

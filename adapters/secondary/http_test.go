@@ -69,9 +69,3 @@ func TestNewConnector(t *testing.T) {
 	})
 
 }
-
-func TestCloseConnection(t *testing.T) {
-	r, _ := http.NewRequest("GET", "https://postman-echo.com/get", ioutil.NopCloser(bytes.NewBufferString("{\"response\":\"body\"}")))
-	r.Body = &mock{}
-	CloseConnection(r)
-}
