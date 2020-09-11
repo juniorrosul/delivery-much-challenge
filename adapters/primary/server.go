@@ -1,7 +1,6 @@
 package primary
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -15,12 +14,6 @@ func StartServer() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/recipes", func(w http.ResponseWriter, r *http.Request) {
-		ingredients, statusOK := r.URL.Query()["i"]
-
-		if !statusOK || len(ingredients) < 1 {
-			fmt.Println("empty params")
-		}
-
 	}).Methods("GET")
 
 	r.Use(middleware.EvaluateParameters)

@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"github.com/juniorrosul/delivery-much-challenge/adapters/secondary"
-	"github.com/juniorrosul/delivery-much-challenge/application/recipe"
+	"github.com/juniorrosul/delivery-much-challenge/application/recipepuppy"
 )
 
 // RecipePuppy - Interface
 type RecipePuppy interface {
-	getRecipes(params string) (*recipe.ResponseModel, error)
+	getRecipes(params string) (*recipepuppy.ResponseModel, error)
 }
 
 // RecipePuppyIntegration - Base struct for API integration
@@ -27,7 +27,7 @@ func NewRecipePuppyIntegration(httpConnector secondary.HTTPConnector) *RecipePup
 }
 
 // GetRecipes - Get recipes from external API
-func (rpi *RecipePuppyIntegration) GetRecipes(request *recipe.RequestModel) (*recipe.ResponseModel, error) {
+func (rpi *RecipePuppyIntegration) GetRecipes(request *recipepuppy.RequestModel) (*recipepuppy.ResponseModel, error) {
 
 	params := strings.Join(request.Ingredients, ",")
 
@@ -39,7 +39,7 @@ func (rpi *RecipePuppyIntegration) GetRecipes(request *recipe.RequestModel) (*re
 
 	body, err := secondary.GetBodyResponse(res)
 
-	var rpr *recipe.ResponseModel
+	var rpr *recipepuppy.ResponseModel
 
 	if err = json.Unmarshal(body, &rpr); err != nil {
 		return nil, err

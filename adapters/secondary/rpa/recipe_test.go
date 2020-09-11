@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/juniorrosul/delivery-much-challenge/application/recipe"
+	"github.com/juniorrosul/delivery-much-challenge/application/recipepuppy"
 )
 
 func TestNewRecipePuppyIntegration(t *testing.T) {
 	t.Run("NO PARAMS", func(t *testing.T) {
 		mockedIntegration := NewRecipePuppyIntegration(&ConnectorMock{})
 
-		_, err := mockedIntegration.GetRecipes(&recipe.RequestModel{})
+		_, err := mockedIntegration.GetRecipes(&recipepuppy.RequestModel{})
 
 		if err != nil {
 			fmt.Println(err)
