@@ -10,8 +10,8 @@ type Recipe struct {
 
 // Response - Internal API response
 type Response struct {
-	Keywords []string `json:"keywords"`
-	Recipes  []Recipe `json:"recipes"`
+	Keywords []string  `json:"keywords"`
+	Recipes  []*Recipe `json:"recipes"`
 }
 
 // Request - Internal API request
@@ -30,7 +30,7 @@ func NewRecipe(title string, ingredients string, link string, gif string) *Recip
 }
 
 // NewResponse - Create new response model
-func NewResponse(keywords []string, recipes []Recipe) *Response {
+func NewResponse(keywords []string, recipes []*Recipe) *Response {
 	return &Response{
 		keywords,
 		recipes,
