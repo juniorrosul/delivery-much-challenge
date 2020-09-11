@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -14,6 +15,7 @@ import (
 	"github.com/juniorrosul/delivery-much-challenge/application/recipepuppy"
 )
 
+// StartServer - Start server function
 func StartServer() {
 	log.Println("Starting server...")
 	r := mux.NewRouter()
@@ -31,7 +33,16 @@ func StartServer() {
 		response.Keywords = keywords
 
 		for i := 0; i < len(recipes.Recipes); i++ {
-			newRecipe := recipe.NewRecipe(recipes.Recipes[i].Title, recipes.Recipes[i].Ingredients, recipes.Recipes[i].Href, recipes.Recipes[i].Thumbnail)
+			ingredients := strings.Split(recipes.Recipes[i].Ingredients, ", ")
+
+			sort.Strings(ingredients)
+
+			newRecipe := recipe.NewRecipe(
+				recipes.Recipes[i].Title,
+				ingredients,
+				recipes.Recipes[i].Href,
+				recipes.Recipes[i].Thumbnail,
+			)
 			response.Recipes = append(response.Recipes, newRecipe)
 		}
 
