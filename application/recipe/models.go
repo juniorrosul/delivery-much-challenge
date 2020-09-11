@@ -7,8 +7,15 @@ type RecipeModel struct {
 	Gif         string `json:"gif"`
 }
 
-type RecipePuppyResponse struct {
-	Recipe []RecipeModel `json:"results"`
+type RecipePuppyModel struct {
+	Title       string `json:"title"`
+	Href        string `json:"href"`
+	Ingredients string `json:"ingredients"`
+	Thumbnail   string `json:"thumbnail"`
+}
+
+type RecipePuppyResponseModel struct {
+	Recipe []RecipePuppyModel `json:"results"`
 }
 
 func NewRecipe(title string, ingredients string, link string, gif string) *RecipeModel {

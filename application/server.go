@@ -6,7 +6,6 @@ import (
 	"sync"
 )
 
-// Recipe model
 type Recipe struct {
 	Title       string `json:"name"`
 	Ingredients string `json:"ingredients"`

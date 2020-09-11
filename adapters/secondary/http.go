@@ -4,20 +4,24 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
-type HttpConnector interface {
+// HTTPConnector Interface for connections
+type HTTPConnector interface {
 	Do(req *http.Request) (*http.Response, error)
 	DoGet(params string) (*http.Response, error)
 }
 
+// Connector - Used for HTTP connections
 type Connector struct {
 	url     string
 	headers map[string]string
 }
 
-func getBodyResponse(res *http.Response) ([]byte, error) {
+// GetBodyResponse (res)
+func GetBodyResponse(res *http.Response) ([]byte, error) {
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
@@ -31,6 +35,33 @@ func getBodyResponse(res *http.Response) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+// NewConnector - Define base URL and Headers for the connection
+func NewConnector(url string, headers map[string]string) HTTPConnector {
+	return &Connector{
+		url:     url,
+		headers: headers,
+	}
+}
+
+// Do - make request
+func (c *Connector) Do(req *http.Request) (*http.Response, error) {
+	client := &http.Client{}
+
+	return client.Do(req)
+}
+
+// DoGet - make GET request
+func (c *Connector) DoGet(params string) (*http.Response, error) {
+	return c.getResponse(http.MethodGet, params, nil)
+}
+
+// CloseConnection - Close HTTP connection
+func CloseConnection(r *http.Request) {
+	if err := r.Body.Close(); err != nil {
+		log.Println("http.close_connection", err.Error())
+	}
 }
 
 func (c *Connector) getResponse(method string, params string, body []byte) (*http.Response, error) {
@@ -59,21 +90,4 @@ func (c *Connector) getResponse(method string, params string, body []byte) (*htt
 	}
 
 	return res, nil
-}
-
-func NewConnector(url string, headers map[string]string) HttpConnector {
-	return &Connector{
-		url:     url,
-		headers: headers,
-	}
-}
-
-func (c *Connector) Do(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
-
-	return client.Do(req)
-}
-
-func (c *Connector) DoGet(params string) (*http.Response, error) {
-	return c.getResponse(http.MethodGet, params, nil)
 }
